@@ -1,8 +1,16 @@
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-
-import { routes } from './app.routes';
+import {ApplicationConfig, importProvidersFrom} from '@angular/core';
+import {provideRouter} from '@angular/router';
+import {routes} from './app.routes';
+import {ToastrModule} from "ngx-toastr";
+import {provideAnimations} from "@angular/platform-browser/animations";
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from "@angular/common/http";
+import {AuthInterceptor} from "./interceptor/auth-interceptor";
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes)]
+  providers: [provideRouter(routes), provideAnimations(), provideHttpClient(withInterceptorsFromDi()),
+    importProvidersFrom(ToastrModule.forRoot()), {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    }]
 };
