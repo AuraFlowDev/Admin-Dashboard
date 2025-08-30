@@ -1,0 +1,114 @@
+<div class="container mt-4" *ngIf="dashboardStats">
+  <h2>Dashboard</h2>
+  <div class="row text-center mb-3">
+    <div class="col">
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Total Revenue</h6>
+          <h3 class="fw-bold text-primary">{{ totalrevenue }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">User Count</h6>
+          <h3 class="fw-bold text-primary">{{ usercount }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Allowlist Count</h6>
+          <h3 class="fw-bold text-primary">{{ allowlistcount }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3>Recent Payments</h3>
+    <div class="mb-2">
+      <label for="statusFilter" class="form-label">Filter by Status:</label>
+      <select id="statusFilter" class="form-select w-auto d-inline-block ms-2" [(ngModel)]="paymentStatusFilter"
+              (change)="onStatusFilterChange(paymentStatusFilter)">
+        <option value="">All</option>
+        <option value="PENDING">PENDING</option>
+        <option value="COMPLETED">COMPLETED</option>
+        <option value="FAILED">FAILED</option>
+      </select>
+    </div>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Payment ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Affiliate</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let payment of payments">
+        <td>{{ payment.id }}</td>
+        <td>{{ payment.paymentId }}</td>
+        <td>{{ Formatter.formatMoney(payment.amount) }}</td>
+        <td>{{ payment.paymentStatus }}</td>
+        <td>{{ payment.affiliateCode }}</td>
+      </tr>
+      <tr *ngFor="let _ of calcPlaceholderrows(this.payments)">
+        <td colspan="5">&nbsp;</td>
+      </tr>
+      </tbody>
+    </table>
+    <nav>
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="paymentPage === 0">
+          <button class="page-link" (click)="changePaymentPage(-1)">Previous</button>
+        </li>
+        <li class="page-item disabled"><span class="page-link">Page {{ paymentPage + 1 }}</span></li>
+        <li class="page-item" [class.disabled]="paymentPage >= totalPaymentPages - 1">
+          <button class="page-link" (click)="changePaymentPage(1)">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div>
+    <h3>Affiliate Stats</h3>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Code</th>
+        <th>Revenue</th>
+        <th>Rewards</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let a of affiliates">
+        <td>{{ a.firstname }} {{ a.lastname }}</td>
+        <td>{{ a.affiliatecode }}</td>
+        <td>{{ Formatter.formatMoney(a.totalRevenue) }}</td>
+        <td>{{ a.totalrewards }}</td>
+      </tr>
+      <tr *ngFor="let _ of calcPlaceholderrows(this.affiliates) ">
+        <td colspan="4">&nbsp;</td>
+
+      </tr>
+
+      </tbody>
+    </table>
+    <nav>
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="affiliatePage === 0">
+          <button class="page-link" (click)="changeAffiliatePage(-1)">Previous</button>
+        </li>
+        <li class="page-item disabled"><span class="page-link">Page {{ affiliatePage + 1 }}</span></li>
+        <li class="page-item" [class.disabled]="affiliatePage >= totalAffiliatePages - 1">
+          <button class="page-link" (click)="changeAffiliatePage(1)">Next</button>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+</div>
