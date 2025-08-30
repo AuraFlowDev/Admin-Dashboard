@@ -27,9 +27,12 @@
             <i class="bi bi-person-circle"></i> Profile
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Account</a></li>
-            <li><hr class="dropdown-divider"></li>
+
+            <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); openProfileModal()">Account</a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
             <li><a class="dropdown-item" href="#" (click)="logout()">Logout</a></li>
           </ul>
         </li>
@@ -37,3 +40,70 @@
     </div>
   </div>
 </nav>
+
+
+<ng-template #profileOver>
+  <div class="modal-header">
+    <h4 class="modal-title">Edit Profile</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="changeForm" (ngSubmit)="saveChanges()">
+      <div class="mb-3">
+        <label for="firstname" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="firstname" name="firstname"
+               formControlName="firstname" placeholder="{{user?.firstname}}">
+      </div>
+      <div class="mb-3">
+        <label for="lastname" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lastname" name="lastname"
+               formControlName="lastname" placeholder="{{user?.lastname}}">
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email"
+               formControlName="email" placeholder="{{user?.email}}">
+        <div *ngIf="wasChangedInvalidly('email')"
+             class="text-danger small">
+          <span *ngIf="changeForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+      <div *ngIf="changePassword">
+        <div class="mb-3">
+          <label for="oldpass" class="form-label">Old Password</label>
+          <input type="password" class="form-control" id="oldpass" name="oldpass"
+                 formControlName="oldPassword">
+        </div>
+        <div class="mb-3">
+          <label for="newpass" class="form-label">New Password</label>
+          <input type="password" class="form-control" id="newpass" name="newpass"
+                 formControlName="newPassword">
+          <div *ngIf="wasChangedInvalidly('newPassword')"
+               class="text-danger small">
+            <span *ngIf="changeForm.get('newPassword')?.errors">Your new password is too weak</span>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="newpassconf" class="form-label">Confirm New Password</label>
+          <input type="password" class="form-control" id="newpassconf" name="newpassconf"
+                 formControlName="newPasswordConfirmation">
+          <div *ngIf="wasChangedInvalidly('newPasswordConfirmation')"
+               class="text-danger small">
+            <span *ngIf="changeForm.get('newPasswordConfirmation')?.errors">Your new password is too weak</span>
+          </div>
+
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="togglePasswordChange()">Change Password
+      </button>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+    <button type="button" class="btn btn-primary" (click)="saveChanges()" [disabled]="!changeForm.valid">Save changes
+    </button>
+  </div>
+</ng-template>
+
+
+
