@@ -22,5 +22,5 @@ export interface BaseAffiliateDto {
 
 export interface AffiliateStatsDto extends BaseAffiliateDto {
   totalRevenue: number;
-  totalrewards: number;
+  totalRewards: number;
 }
