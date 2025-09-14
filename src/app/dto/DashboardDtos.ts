@@ -1,4 +1,3 @@
-
 export interface DashboardDto {
   totalrevenue: number;
   usercount: number;
@@ -14,11 +13,14 @@ export interface PaymentDataDto {
   affiliateCode: string;
 }
 
-export interface AffiliateStatsDto {
+export interface BaseAffiliateDto {
   firstname: string;
   lastname: string;
   affiliatecode: string;
   roles: string[];
+}
+
+export interface AffiliateStatsDto extends BaseAffiliateDto {
   totalRevenue: number;
   totalrewards: number;
 }
