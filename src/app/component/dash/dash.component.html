@@ -89,7 +89,7 @@
         <td>{{ a.firstname }} {{ a.lastname }}</td>
         <td>{{ a.affiliatecode }}</td>
         <td>{{ Formatter.formatMoney(a.totalRevenue) }}</td>
-        <td>{{ a.totalrewards }}</td>
+        <td>{{ Formatter.formatMoney(a.totalRewards) }}</td>
       </tr>
       <tr *ngFor="let _ of calcPlaceholderrows(this.affiliates) ">
         <td colspan="4">&nbsp;</td>
