@@ -12,6 +12,9 @@ export const routes: Routes = [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashComponent},
       {
+        path: 'affiliate', children: [
+          {path: 'payouts', component: PayoutsComponent}
+        ]
       }
     ]
   },

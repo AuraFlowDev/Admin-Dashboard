@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Router} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {NgbModal, NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {AuthService} from "../../services/auth.service";
@@ -13,7 +13,7 @@ import {PassChangeDto} from "../../dto/PassChangeDto";
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, NgbModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, NgbModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

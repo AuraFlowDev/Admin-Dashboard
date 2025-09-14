@@ -12,11 +12,16 @@
         <li class="nav-item">
           <a class="nav-link active" href="#">Dashboard</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Settings</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">Affiliate
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+
+            <li><a class="dropdown-item" href="#" (click)="$event.preventDefault();"
+                   [routerLink]="['/affiliate','payouts']">Payouts</a>
+            </li>
+          </ul>
         </li>
       </ul>
 
