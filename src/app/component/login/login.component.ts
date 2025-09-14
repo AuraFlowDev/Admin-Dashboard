@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthResponseDto, LoginDto} from "../../dto/LoginDto";
 import {AuthService} from "../../services/auth.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {handleError} from "../../dto/ErrorDto";
 import {ToastrService} from "ngx-toastr";
 import {NgIf} from "@angular/common";
@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
   constructor(private fb: FormBuilder, private authservice: AuthService, private router: Router,
+              private route: ActivatedRoute,
               private toastr: ToastrService) {
   }
 
@@ -47,7 +48,8 @@ export class LoginComponent implements OnInit {
           next: (dto: AuthResponseDto) => {
             console.log('AuthResponseDto:', dto);
             this.toastr.success("Welcome Back " + dto.user.firstname);
-            this.router.navigate(['/']);
+            const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') || '/';
+            this.router.navigateByUrl(redirectTo);
           },
           error: (error) => {
             this.toastr.error(handleError(error))
