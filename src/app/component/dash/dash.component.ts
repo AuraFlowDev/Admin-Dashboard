@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AdminService, AffiliateStatsDto, DashboardDto, PaymentDataDto} from '../../services/admin.service';
 import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {Formatter} from "../../utils/Formatter";
+import {DashboardService} from "../../services/dashboard.service";
+import {AffiliateStatsDto, DashboardDto, PaymentDataDto} from "../../dto/DashboardDtos";
 
 @Component({
   selector: 'app-dashboard',
@@ -24,24 +25,24 @@ export class DashComponent implements OnInit {
   paymentStatusFilter = '';
 
 
-  constructor(private adminService: AdminService) {
+  constructor(private dashService: DashboardService) {
   }
 
   ngOnInit() {
-    this.adminService.getDashboardStats().subscribe(data => this.dashboardStats = data);
+    this.dashService.getDashboardStats().subscribe(data => this.dashboardStats = data);
     this.loadPayments();
     this.loadAffiliates();
   }
 
   loadPayments() {
-    this.adminService.getPaymentData(this.paymentPage, undefined, this.paymentStatusFilter).subscribe(data => {
+    this.dashService.getPaymentData(this.paymentPage, undefined, this.paymentStatusFilter).subscribe(data => {
       this.payments = data.content;
       this.totalPaymentPages = data.totalPages;
     });
   }
 
   loadAffiliates() {
-    this.adminService.getAffiliateData(this.affiliatePage).subscribe(data => {
+    this.dashService.getAffiliateData(this.affiliatePage).subscribe(data => {
       this.affiliates = data.content;
       this.totalAffiliatePages = data.totalPages;
     });
@@ -76,7 +77,7 @@ export class DashComponent implements OnInit {
   }
 
   calcPlaceholderrows(baselist: Object[]): number[] {
-    let amountOfRows: number = this.adminService.defaulPageSize;
+    let amountOfRows: number = this.dashService.defaulPageSize;
     let diff = Math.max(0, amountOfRows - baselist.length);
     return new Array(diff).fill(0);
   }
