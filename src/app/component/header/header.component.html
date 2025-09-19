@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link active" href="#">Dashboard</a>
+          <a class="nav-link" href="#">Dashboard</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -22,6 +22,10 @@
                    [routerLink]="['/affiliate','payouts']">Payouts</a>
             </li>
           </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" (click)="$event.preventDefault();"
+             [routerLink]="['packages']">Packages</a>
         </li>
       </ul>
 
