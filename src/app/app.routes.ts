@@ -5,6 +5,7 @@ import {LayoutComponent} from "./component/layout/layout.component";
 import {authGuard} from "./guards/auth.guard";
 import {guestGuard} from "./guards/guest.guard";
 import {PayoutsComponent} from "./component/payouts/payouts.component";
+import {PackagesComponent} from "./component/packages/packages.component";
 
 export const routes: Routes = [
   {
@@ -14,8 +15,9 @@ export const routes: Routes = [
       {
         path: 'affiliate', children: [
           {path: 'payouts', component: PayoutsComponent}
-        ]
-      }
+        ],
+      },
+      {path: 'packages', component: PackagesComponent}
     ]
   },
 
