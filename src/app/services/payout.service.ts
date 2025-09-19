@@ -24,7 +24,7 @@ export class PayoutService {
   }
 
   postPayoutClaim(claimDto: ClaimDto): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/payout`, claimDto);
+    return this.http.post<void>(`${this.baseUrl}/payouts`, claimDto);
   }
 
 

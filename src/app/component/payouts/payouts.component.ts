@@ -144,34 +144,29 @@ export class PayoutsComponent implements OnInit {
 
   issuePayout() {
     if (this.selected.length === 0) return;
-    this.selected.forEach(
-      (id) => {
-        this.issuePayoutForId(id);
+    const cleanedSelected = this.cleanSelected();
+
+    const dto = {
+      rewardIds: cleanedSelected
+    }
+    this.payoutService.postPayoutClaim(dto).subscribe({
+      next: () => {
+        this.toastr.success('Payed out ' + cleanedSelected.length + ' rewards successfully');
+        this.loadPayouts();
+
+      }, error: (error) => {
+        this.toastr.error(error.error.error)
       }
-    )
-    this.loadPayouts();
+    })
     this.closeConfirm();
   }
+
   clearSelection() {
-    this.selected=[];
+    this.selected = [];
   }
 
-  private issuePayoutForId(id: number) {
-    const claimDto = {
-      rewardId: id,
-    }
-    const payout = this.payouts.find(p => p.rewardId === id);
-    if (!payout) return;
-    if (!payout.claimed) {
-      this.payoutService.postPayoutClaim(claimDto).subscribe({
-        next: () => {
-          this.toastr.success(`Payout for ${Formatter.formatMoney(payout?.rewardAmount)} issued to ${payout?.firstname} ${payout?.lastname} successfully`);
-        },
-        error: (error) => {
-          this.toastr.error(error.error.error)
-        }
-      })
-    }
+  private cleanSelected(): number[] {
+    return this.selected.filter(x => this.payouts.find(p => p.rewardId === x && !p.claimed) !== undefined);
   }
 
   get payoutAmount(): number {
@@ -181,7 +176,7 @@ export class PayoutsComponent implements OnInit {
   }
 
   get numOfPayouts(): number {
-    return this.selected.map(x => this.payouts.find(p => p.rewardId === x && !p.claimed)).filter(x => x !== undefined).length;
+    return this.cleanSelected().length;
   }
 
   protected readonly getPlaceholderRows = getPlaceholderRows;

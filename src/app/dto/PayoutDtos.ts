@@ -16,5 +16,5 @@ export interface PayoutResDto extends BaseAffiliateDto {
 }
 
 export interface ClaimDto {
-  rewardId: number;
+  rewardIds: number[];
 }
