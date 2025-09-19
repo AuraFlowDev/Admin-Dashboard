@@ -1,1 +1,148 @@
-<p>payouts works!</p>
+<div class="container mt-4">
+  <h2>Payouts</h2>
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+    <!-- Filters -->
+    <form class="d-flex flex-wrap align-items-end gap-3 mb-0" (ngSubmit)="applyFilter()">
+      <!-- Month -->
+      <div class="d-flex flex-column">
+        <label for="monthFilter" class="form-label mb-0">Month</label>
+        <select id="monthFilter"
+                class="form-select"
+                [(ngModel)]="month"
+                name="month">
+          <option *ngFor="let m of months; let i = index" [ngValue]="i + 1">{{ m }}</option>
+        </select>
+      </div>
+
+      <div class="d-flex flex-column">
+        <label for="yearFilter" class="form-label mb-0">Year</label>
+        <select id="yearFilter"
+                class="form-select"
+                [(ngModel)]="year"
+                name="year">
+          <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+        </select>
+      </div>
+
+      <div class="d-flex flex-column">
+        <label for="affiliateCodeFilter" class="form-label mb-0">Affiliate Code</label>
+        <input id="affiliateCodeFilter"
+               type="text"
+               class="form-control"
+               [(ngModel)]="affiliateCode"
+               name="affiliateCode"
+               placeholder="Enter code"/>
+      </div>
+
+      <div class="d-flex flex-column">
+        <label for="claimedFilter" class="form-label mb-0">Claimed</label>
+        <select id="claimedFilter"
+                class="form-select"
+                [(ngModel)]="claimed"
+                name="claimed">
+          <option [ngValue]="null">Any</option>
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="clearFilter()">Clear</button>
+      </div>
+    </form>
+
+    <div class="dropdown ms-auto" *ngIf="selected.length > 0">
+      <button
+        class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2"
+        type="button"
+        id="bulkActionsBtn"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <span class="fw-semibold">Actions</span>
+        <span class="badge text-bg-secondary">{{ selected.length }}</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bulkActionsBtn">
+        <li>
+          <button class="dropdown-item" type="button" (click)="openConfirm()" [disabled]="numOfPayouts<1">Issue payout
+          </button>
+        </li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li>
+          <button class="dropdown-item" type="button" (click)="clearSelection()">Clear selection</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Affiliate Code</th>
+      <th>Payout</th>
+      <th>Roles</th>
+      <th>Claimed</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let p of payouts">
+      <td>
+        <div class="d-flex justify-content-center align-items-center">
+          <input type="checkbox"
+                 [checked]="isSelected(p.rewardId)"
+                 (change)="toggleSelection(p.rewardId, $event)">
+        </div>
+      </td>
+      <td>{{ p.firstname }} {{ p.lastname }}</td>
+      <td>
+        <button type="button"
+                class="btn btn-link p-0 align-baseline"
+                (click)="setAffiliateCode(p.affiliatecode)">
+          {{ p.affiliatecode }}
+        </button>
+      </td>
+      <td>{{ Formatter.formatMoney(p.rewardAmount) }}</td>
+      <td>{{ Formatter.formatRoles(p.roles) }}</td>
+      <td>
+  <span
+    [ngClass]="!p.claimed?'badge bg-danger-subtle text-danger-emphasis':'badge bg-success-subtle text-success-emphasis'">
+    {{ p.claimed ? 'Yes' : 'No' }}
+  </span>
+      </td>
+
+    </tr>
+    <tr *ngFor="let _ of getPlaceholderRows(payouts, pageSize)" class="placeholder-row">
+      <td colspan="6">&nbsp;</td>
+    </tr>
+    </tbody>
+  </table>
+  <nav>
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="!hasPrevious">
+        <button class="page-link" (click)="changePage(-1)">Previous</button>
+      </li>
+      <li class="page-item disabled"><span class="page-link">Page {{ page + 1 }}</span></li>
+      <li class="page-item" [class.disabled]="!hasNext">
+        <button class="page-link" (click)="changePage(1)">Next</button>
+      </li>
+    </ul>
+  </nav>
+
+
+</div>
+<app-confirm-dialog
+  [show]="showDialog"
+  title="Confirm Payout"
+  message="Are you sure you want to issue {{numOfPayouts}} payout(s) for {{Formatter.formatMoney(payoutAmount)}}?"
+  confirmText="Yes, issue payout"
+  (confirmed)="issuePayout()"
+  (cancel)="closeConfirm()"
+>
+
+</app-confirm-dialog>
