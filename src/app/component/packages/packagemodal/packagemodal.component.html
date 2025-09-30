@@ -1,0 +1,125 @@
+<div class="modal-backdrop fade show" *ngIf="show"></div>
+
+<div class="modal fade show d-block" tabindex="-1" *ngIf="show">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title">Create Package</h5>
+          <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Name -->
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input class="form-control"
+                   formControlName="name"
+                   placeholder="e.g., Bronze Package"
+                   [ngClass]="{'is-invalid': form.get('name')?.touched && form.get('name')?.invalid}">
+            <div class="invalid-feedback">
+              Name is required (max 128 chars).
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control"
+                      rows="3"
+                      formControlName="description"
+                      placeholder="Short description..."></textarea>
+          </div>
+
+          <!-- Price -->
+          <div class="mb-3">
+            <label class="form-label">Price</label>
+            <div class="input-group">
+              <span class="input-group-text">€</span>
+              <input type="number"
+                     class="form-control"
+                     formControlName="price"
+                     inputmode="decimal"
+                     min="0" step="0.01"
+                     placeholder="0.00"
+                     (input)="onPriceInput($event)"
+                     (keydown)="allowOnlyNumbers($event)"
+                     [ngClass]="{'is-invalid': form.get('price')?.touched && form.get('price')?.invalid}">
+              <div class="invalid-feedback">
+                Price must be a non-negative number.
+              </div>
+            </div>
+          </div>
+
+
+          <hr>
+
+          <!-- Add Privilege -->
+          <div class="dropdown mb-3">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              + Add Privilege
+            </button>
+            <ul class="dropdown-menu">
+              <li *ngFor="let t of privilegeTypes">
+                <button class="dropdown-item" type="button" (click)="addPrivilege(t)">
+                  {{ PrivilegeTypeLabels[t] }}
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Privileges -->
+          <div *ngIf="privileges.controls.length === 0" class="text-muted">
+            No privileges added yet.
+          </div>
+
+          <div class="privileges-scroll mt-2" *ngIf="privileges.controls.length > 0">
+            <div class="row row-cols-1 row-cols-md-2 g-3 mx-0">
+              <div class="col" *ngFor="let grp of privileges.controls; let i = index" [formGroup]="$any(grp)">
+                <div class="card h-100 shadow-sm">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Privilege #{{ i + 1 }}</strong>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="removePrivilege(i)">
+                      Remove
+                    </button>
+                  </div>
+
+                  <div class="card-body">
+                    <span class="badge bg-secondary mb-3 text-break">{{ grp.get('type')?.value }}</span>
+
+                    <!-- Role -->
+                    <div *ngIf="grp.get('type')?.value === PrivilegeType.ROLE">
+                      <label class="form-label">Role</label>
+                      <select class="form-select" formControlName="role">
+                        <option *ngFor="let r of roles" [ngValue]="r">{{ RoleLabels[r] }}</option>
+                      </select>
+                    </div>
+
+                    <!-- Allowlist -->
+                    <div *ngIf="grp.get('type')?.value === PrivilegeType.ALLOWLIST">
+                      <label class="form-label">Whitelist slots</label>
+                      <input type="number"
+                             class="form-control"
+                             formControlName="whitelistSlots"
+                             min="1" step="1"
+                             placeholder="e.g., 5"
+                             [ngClass]="{'is-invalid': grp.get('whitelistSlots')?.touched && grp.get('whitelistSlots')?.invalid}">
+                      <div class="invalid-feedback">Must be at least 1.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
