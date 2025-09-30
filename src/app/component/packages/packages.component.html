@@ -18,3 +18,9 @@
     </div>
   </div>
 </div>
+
+<app-packagemodal
+  [show]="showCreateModal"
+  (confirm)="createPackage($event)"
+  (cancel)="closeCreateModal()">
+</app-packagemodal>
