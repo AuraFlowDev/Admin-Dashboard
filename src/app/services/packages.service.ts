@@ -7,7 +7,7 @@ import {PackageCreateDto, PackageDto, PackageFetchDto} from "../dto/PackageDtos"
 @Injectable({
   providedIn: 'root'
 })
-export class PackagesServic {
+export class PackageService {
   private baseUrl = this.globals.backendUrl + '/packages';
 
   constructor(private http: HttpClient, private globals: Globals) {
