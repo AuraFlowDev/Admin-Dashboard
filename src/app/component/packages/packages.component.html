@@ -5,11 +5,34 @@
   </div>
 
   <div class="row g-3 mt-3">
-    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let p of packages">
+    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let p of packages; let i = index">
       <div class="card h-100 shadow-sm">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ p.name }}</h5>
-          <p class="card-text text-muted flex-grow-1">{{ p.description }}</p>
+        <div class="card-header" (click)="$event.stopPropagation()">
+          <div class="form-check form-switch d-flex align-items-center m-0">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              [id]="'pkg-active-switch-' + i"
+              [checked]="p.active"
+              (click)="$event.preventDefault(); openConfirmModal(p)"
+              [ngClass]="p.active ? 'bg-success border-success' : 'bg-secondary border-secondary'"
+            />
+            <label
+              class="form-check-label ms-2 small"
+              [for]="'pkg-active-switch-' + i"
+              [ngClass]="p.active ? 'text-success' : 'text-muted'"
+            >
+              {{ p.active ? 'Active' : 'Inactive' }}
+            </label>
+          </div>
+        </div>
+
+        <div class="card-body d-flex flex-column cursor-pointer" (click)="openDetailsModal(p)" tabindex="0">
+          <h5 class="card-title mb-2">{{ p.name }}</h5>
+          <p class="card-text text-muted flex-grow-1 line-clamp-2" [title]="p.description">
+            {{ p.description }}
+          </p>
           <div class="mt-auto fw-bold">
             {{ Formatter.formatMoney(p.price) }}
           </div>
@@ -17,10 +40,49 @@
       </div>
     </div>
   </div>
+  <ng-container *ngIf="showDetails" [ngTemplateOutlet]="detailsModal"></ng-container>
 </div>
+
+<app-confirm-dialog
+  [show]="showConfirmModal"
+  message="Are you sure you want to {{selected?.active?'de':''}}activate this package?"
+  (confirmed)="confirmPackageChange()"
+  (cancelled)="closeConfirmModal()"
+>
+</app-confirm-dialog>
 
 <app-packagemodal
   [show]="showCreateModal"
   (confirm)="createPackage($event)"
   (cancel)="closeCreateModal()">
 </app-packagemodal>
+
+<ng-template #detailsModal>
+  <div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ selected?.name }}</h5>
+          <button type="button" class="btn-close" (click)="closeDetailsModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center gap-2 mb-2">
+          <span class="badge" [ngClass]="selected?.active ? 'bg-success' : 'bg-secondary'">
+            {{ selected?.active ? 'Active' : 'Inactive' }}
+          </span>
+            <span class="fw-semibold">{{ Formatter.formatMoney(selected?.price) }}</span>
+            <span class="text-muted" *ngIf="selected?.currency">• {{ selected?.currency }}</span>
+          </div>
+          <p class="mb-0" style="white-space: pre-wrap">{{ selected?.description }}</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" (click)="closeDetailsModal()">Close</button>
+          <button class="btn btn-primary" (click)="openConfirmModal(selected!)">
+            {{ selected?.active ? 'Deactivate' : 'Activate' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" (click)="closeDetailsModal()"></div>
+</ng-template>

@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {PackageCreateDto, PackageDto} from "../../dto/PackageDtos";
 import {PackageService} from "../../services/packages.service";
 import {ToastrService} from "ngx-toastr";
-import {NgForOf} from "@angular/common";
+import {NgClass, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
 import {Formatter} from "../../utils/Formatter";
 import {PackageModalComponent} from "./packagemodal/packagemodal.component";
 import {ConfirmDialogComponent} from "../shared/confirm-dialog/confirm-dialog.component";
@@ -11,9 +11,12 @@ import {ConfirmDialogComponent} from "../shared/confirm-dialog/confirm-dialog.co
   selector: 'app-packages',
   standalone: true,
   imports: [
-    NgForOf
     NgForOf,
     PackageModalComponent,
+    ConfirmDialogComponent,
+    NgClass,
+    NgIf,
+    NgTemplateOutlet
   ],
   templateUrl: './packages.component.html',
   styleUrl: './packages.component.scss'
@@ -22,6 +25,9 @@ export class PackagesComponent implements OnInit {
 
   packages: PackageDto[] = [];
   showCreateModal: boolean = false;
+  showConfirmModal: boolean = false;
+  selected: PackageDto | null = null;
+  showDetails: boolean = false;
 
   ngOnInit(): void {
     this.loadPackages();
@@ -33,6 +39,7 @@ export class PackagesComponent implements OnInit {
   loadPackages() {
     this.service.getPackages().subscribe({
       next: (data) => {
+        console.log(data);
         this.packages = data.packages;
       },
       error: (err) => {
@@ -45,6 +52,7 @@ export class PackagesComponent implements OnInit {
     this.service.createPackage(dto).subscribe({
       next: (data) => {
         this.toastr.success("Package created");
+        data = {...data, active: true};
         this.packages.push(data);
       },
       error: (err) => {
@@ -61,6 +69,76 @@ export class PackagesComponent implements OnInit {
   openCreateModal() {
     this.showCreateModal = true;
     console.log("open modal:", this.showCreateModal);
+  }
+
+  openConfirmModal(packageDto: PackageDto) {
+    this.showDetails = false;
+    this.selected = packageDto;
+    this.showConfirmModal = true;
+  }
+
+  closeConfirmModal() {
+    this.showConfirmModal = false;
+    this.selected = null;
+  }
+
+  deletePackage() {
+    if (!this.selected) return;
+    if (!this.selected?.active) {
+      this.toastr.error("Cannot deactivate inactive package");
+      return;
+    }
+    const id = this.selected.id;
+    this.service.deletePackage(this.selected.id).subscribe({
+      next: () => {
+        this.toastr.success("Package deactivated");
+        this.setPackageActive(id, false);
+      },
+      error: (err) => {
+        this.toastr.error(err.error.error);
+      }
+    })
+    this.closeConfirmModal();
+  }
+
+  setPackageActive(id: number, active: boolean) {
+    console.log("Setting package active: ", id, " to: ", active, "")
+    this.packages = this.packages.map(p => p.id === id ? {...p, active: active} : p);
+    console.log(this.packages)
+  }
+
+  activatePackage() {
+    if (!this.selected) return;
+    if (this.selected?.active) {
+      this.toastr.error("Cannot activate active package");
+      return;
+    }
+    const id = this.selected.id;
+    this.service.activatePackage(this.selected.id).subscribe({
+      next: () => {
+        this.toastr.success("Package activated");
+        this.setPackageActive(id, true);
+      },
+      error: (err) => {
+        this.toastr.error(err.error.error);
+      }
+    })
+    this.closeConfirmModal();
+  }
+
+  confirmPackageChange() {
+    if (!this.selected) return;
+    this.selected.active ? this.deletePackage() : this.activatePackage();
+  }
+
+  openDetailsModal(packageDto: PackageDto) {
+    this.selected = packageDto;
+    this.showDetails = true;
+  }
+
+  closeDetailsModal() {
+    this.showDetails = false;
+    this.selected = null;
   }
 
 
