@@ -1,3 +1,5 @@
+import {Role} from "./PrivilegeDtos";
+
 export interface DashboardDto {
   totalrevenue: number;
   usercount: number;
@@ -17,7 +19,7 @@ export interface BaseAffiliateDto {
   firstname: string;
   lastname: string;
   affiliatecode: string;
-  roles: string[];
+  roles: Role[];
 }
 
 export interface AffiliateStatsDto extends BaseAffiliateDto {
