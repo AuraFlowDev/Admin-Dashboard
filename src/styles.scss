@@ -1,4 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
 @import "bootstrap/scss/bootstrap.scss";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 @import "ngx-toastr/toastr";
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cursor-pointer { cursor: pointer; }
+
