@@ -1,0 +1,143 @@
+<!-- Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="show"></div>
+
+<!-- Modal -->
+<div class="modal fade show d-block" tabindex="-1" *ngIf="show">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">Create Affiliate Rule</h5>
+          <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+
+          <!-- Type -->
+          <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select class="form-select"
+                    formControlName="type"
+                    [ngClass]="{'is-invalid': isInvalid('type')}">
+              <option *ngFor="let t of thresholdtypes" [ngValue]="t">
+                {{ ThresholdTypeLabels[t] }}
+              </option>
+            </select>
+            <div class="invalid-feedback">Type is required.</div>
+          </div>
+
+          <hr>
+
+          <!-- Allowed Roles Multi Select -->
+          <div class="mb-2">
+            <div class="dropdown">
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                + Allowed Roles
+                <span class="badge bg-secondary ms-2">
+                  {{ (form.get('allowedRoles')?.value?.length || 0) }}
+                </span>
+              </button>
+
+              <ul class="dropdown-menu p-2" style="min-width: 18rem;">
+                <li *ngFor="let r of roletypes" class="dropdown-item d-flex align-items-center gap-2">
+                  <input class="form-check-input m-0"
+                         type="checkbox"
+                         [checked]="isRoleSelected(r)"
+                         (change)="toggleRole(r)"/>
+                  <label class="form-check-label flex-grow-1">
+                    {{ RoleLabels[r] }}
+                  </label>
+                </li>
+              </ul>
+            </div>
+
+            <div class="form-text">Select one or more roles.</div>
+            <div class="text-danger small"
+                 *ngIf="isInvalid('allowedRoles')">
+              Pick at least one role.
+            </div>
+          </div>
+
+          <!-- Role Chips -->
+          <div *ngIf="(form.get('allowedRoles')?.value?.length || 0) === 0" class="text-muted">
+            No roles added yet.
+          </div>
+
+          <div class="roles-wrap" *ngIf="(form.get('allowedRoles')?.value?.length || 0) > 0">
+            <span class="badge rounded-pill bg-info d-inline-flex align-items-center me-2 mb-2"
+                  *ngFor="let r of allowedRoles">
+              <span class="text-dark me-2">
+                {{ RoleLabels[r] }}
+              </span>
+              <button type="button"
+                      class="btn btn-sm btn-outline-dark border-0 p-0 lh-1"
+                      (click)="removeRole(r)"
+                      aria-label="Remove role">
+                ✕
+              </button>
+            </span>
+          </div>
+
+          <hr>
+
+          <!-- Reward Percentage -->
+          <div class="mb-3">
+            <label class="form-label">Reward Percentage</label>
+            <div class="input-group">
+              <input type="number"
+                     class="form-control"
+                     formControlName="rewardPercentage"
+                     inputmode="numeric"
+                     min="0" max="100" step="1"
+                     placeholder="e.g., 15"
+                     [ngClass]="{
+                       'is-invalid': form.get('rewardPercentage')?.touched &&
+                                     form.get('rewardPercentage')?.invalid
+                     }"
+              />
+              <span class="input-group-text">%</span>
+              <div class="invalid-feedback">
+                Enter a value between 0 and 100.
+              </div>
+            </div>
+            <div class="form-text">
+              How much of the reward is granted.
+            </div>
+          </div>
+
+          <!-- Bound (hidden if type = OnlyRole) -->
+          <div class="mb-3" *ngIf="form.get('type')?.value !== ThresholdType.OnlyRole">
+            <label class="form-label">Bound</label>
+            <input type="number"
+                   class="form-control"
+                   formControlName="bound"
+                   min="0"
+                   step="1"
+                   placeholder="e.g., 10"
+                   [ngClass]="{
+                     'is-invalid': isInvalid('bound')
+                   }"
+            />
+            <div class="form-text">
+              Used depending on rule type (≤, ≥, etc.).
+            </div>
+            <div class="invalid-feedback">Bound must be non-negative.</div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+            Create
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
