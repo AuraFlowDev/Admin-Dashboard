@@ -6,6 +6,7 @@ import {authGuard} from "./guards/auth.guard";
 import {guestGuard} from "./guards/guest.guard";
 import {PayoutsComponent} from "./component/payouts/payouts.component";
 import {PackagesComponent} from "./component/packages/packages.component";
+import {ThreshComponent} from "./component/affiliate/thresh/thresh.component";
 import {TwoFactorComponent} from "./component/two-factor/two-factor.component";
 
 export const routes: Routes = [
@@ -15,7 +16,8 @@ export const routes: Routes = [
       {path: 'dashboard', component: DashComponent},
       {
         path: 'affiliate', children: [
-          {path: 'payouts', component: PayoutsComponent}
+          {path: 'payouts', component: PayoutsComponent},
+          {path: 'thresholds', component: ThreshComponent}
         ],
       },
       {path: 'packages', component: PackagesComponent}
