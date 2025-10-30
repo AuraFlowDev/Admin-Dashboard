@@ -8,10 +8,11 @@ import {PayoutsComponent} from "./component/payouts/payouts.component";
 import {PackagesComponent} from "./component/packages/packages.component";
 import {ThreshComponent} from "./component/affiliate/thresh/thresh.component";
 import {TwoFactorComponent} from "./component/two-factor/two-factor.component";
+import {adminGuard} from "./guards/admin.guard";
 
 export const routes: Routes = [
   {
-    path: '', component: LayoutComponent, canActivate: [authGuard], canActivateChild: [authGuard], children: [
+    path: '', component: LayoutComponent, canActivate: [authGuard, adminGuard], canActivateChild: [authGuard, adminGuard], children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashComponent},
       {
