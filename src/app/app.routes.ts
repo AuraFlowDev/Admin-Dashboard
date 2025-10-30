@@ -6,6 +6,7 @@ import {authGuard} from "./guards/auth.guard";
 import {guestGuard} from "./guards/guest.guard";
 import {PayoutsComponent} from "./component/payouts/payouts.component";
 import {PackagesComponent} from "./component/packages/packages.component";
+import {TwoFactorComponent} from "./component/two-factor/two-factor.component";
 
 export const routes: Routes = [
   {
@@ -22,4 +23,5 @@ export const routes: Routes = [
   },
 
   {path: 'login', component: LoginComponent, canActivate: [guestGuard]},
+  {path: 'verify/:reqId', component: TwoFactorComponent, canActivate: [guestGuard]}
 ];
