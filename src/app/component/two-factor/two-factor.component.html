@@ -1,1 +1,44 @@
-<p>two-factor works!</p>
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="text-center mb-4">Two-Factor Verification</h2>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+            <div class="mb-3">
+              <label for="code" class="form-label">6-digit code</label>
+              <input
+                id="code"
+                type="text"
+                class="form-control"
+                formControlName="code"
+                placeholder="Enter your 6-digit code"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="6"
+              >
+              <div *ngIf="form.get('code')?.touched && form.get('code')?.invalid"
+                   class="text-danger small mt-1">
+                <span *ngIf="form.get('code')?.errors?.['required']">Code is required.</span>
+                <span *ngIf="form.get('code')?.errors?.['pattern']">Enter exactly 6 digits.</span>
+              </div>
+            </div>
+
+            <div class="text-center text-muted small mb-3">
+              Request ID: <code>{{ reqId }}</code>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="form.invalid">
+              Verify
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <button class="btn btn-link" (click)="onCancel()">Back to Login</button>
+      </div>
+    </div>
+  </div>
+</div>
