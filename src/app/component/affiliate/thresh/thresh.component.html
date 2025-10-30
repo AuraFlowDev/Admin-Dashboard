@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <h2>Affiliate Rules</h2>
   <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
-    <button class="btn btn-primary">Create Affiliate Rule</button>
+    <button class="btn btn-primary" (click)="openCreateModal()">Create Affiliate Rule</button>
 
     <form class="d-flex flex-wrap align-items-end gap-3 mb-0" (ngSubmit)="loadThresholds()">
 
@@ -81,6 +81,13 @@
   <ng-container *ngIf="showDetails" [ngTemplateOutlet]="detailsModal"></ng-container>
 
 </div>
+
+<app-treshmodal
+[show]="showCreateModal"
+  (confirm)="createThreshold($event)"
+  (cancel)="closeCreateModal()">
+
+</app-treshmodal>
 
 <app-confirm-dialog
   [show]="showConfirmModal"
