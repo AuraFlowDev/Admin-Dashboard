@@ -29,6 +29,18 @@ export class AuthService {
     )
   }
 
+  verifyTwoFactor(dto: VerifyRequest): Observable<OneFactorResponse> {
+    const params = setParamsFromDto(new HttpParams(), dto);
+    return this.http.get<OneFactorResponse>(this.authUrl + "/login/verify", {
+      params: params
+    }).pipe(
+      tap((dto) => {
+        this.setToken(dto.token);
+      })
+    );
+
+  }
+
   logoutUser(): void {
     localStorage.removeItem(AuthService.authTokenKey);
   }
