@@ -5,7 +5,14 @@ export class LoginDto {
   password: string;
 }
 
-export class AuthResponseDto{
+export class UserContextResponse {
   user:UserDto;
+}
+
+export class OneFactorResponse extends UserContextResponse{
   token: string;
+}
+
+export class TwoFactorResponse extends UserContextResponse{
+  reqId: string;
 }
