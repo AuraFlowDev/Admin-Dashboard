@@ -7,13 +7,16 @@ import {AuthService} from "../services/auth.service";
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
+  whiteList : Map<String, boolean> = new Map<String, boolean>();
+
   constructor(private globals: Globals, private authservice: AuthService) {
+    this.whiteList.set(this.globals.backendUrl + "/auth/login", true);
+    this.whiteList.set(this.globals.backendUrl + "/auth/login/verify", true);
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log("AuthInterceptor with uri:", req.url);
-    const loginUri = this.globals.backendUrl + "/auth/login";
-    if (req.url === loginUri) {
+    if (this.whiteList.get(req.url)) {
       return next.handle(req);
     }
 
