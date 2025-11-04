@@ -54,7 +54,7 @@ export class PackageModalComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: [''],
-      price: [0, [Validators.required, Validators.min(0), Validators.pattern("^\d+([.]\d{0,2})?$")]],
+      price: [0, [Validators.required, Validators.min(0), Validators.pattern("^\\d+(\\.\\d{1,2})?$")]],
       privileges: this.fb.array([])
     });
   }
