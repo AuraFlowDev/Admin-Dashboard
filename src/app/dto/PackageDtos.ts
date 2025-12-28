@@ -16,7 +16,7 @@ export class PackageFetchDto {
 
 export class PackageCreateDto {
   name: string;
-  description: string;
+  description?: string;
   price: number;
   privileges: PrivilegeDto[];
 }

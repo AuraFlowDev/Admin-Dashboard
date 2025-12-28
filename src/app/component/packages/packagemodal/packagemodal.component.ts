@@ -33,6 +33,7 @@ export class PackageModalComponent implements OnInit {
   @Input() open: boolean = false;
   @Input() show: boolean = false;
   @Output() cancel = new EventEmitter<void>();
+  // Todo: add callback for cleaning the form
   @Output() confirm = new EventEmitter<PackageCreateDto>();
 
   form: FormGroup;
@@ -147,9 +148,10 @@ export class PackageModalComponent implements OnInit {
     }
 
     const raw = this.form.getRawValue();
+    const description = (raw.description as string).trim();
     const dto: PackageCreateDto = {
       name: raw.name,
-      description: raw.description,
+      description: description === "" ? undefined : description,
       price: raw.price,
       privileges: (raw.privileges as FormPrivilege[]).map((p) => {
         switch (p.type) {
@@ -164,7 +166,7 @@ export class PackageModalComponent implements OnInit {
 
           case PrivilegeType.ALLOWLIST: {
             const listDto = new AllowListPrivilegeDto();
-            listDto.whitelistSlots = p.whitelistSlots; // ✅ camelCase
+            listDto.whitelistSlots = p.whitelistSlots;
             return listDto;
           }
         }
