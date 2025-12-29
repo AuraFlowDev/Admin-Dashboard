@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {PackageCreateDto} from "../../../dto/PackageDtos";
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {
@@ -29,11 +29,10 @@ type FormPrivilege =
   templateUrl: './packagemodal.component.html',
   styleUrl: './packagemodal.component.scss'
 })
-export class PackageModalComponent implements OnInit {
-  @Input() open: boolean = false;
+export class PackageModalComponent implements OnInit, OnChanges {
   @Input() show: boolean = false;
+  @Input() resetToken = 0;
   @Output() cancel = new EventEmitter<void>();
-  // Todo: add callback for cleaning the form
   @Output() confirm = new EventEmitter<PackageCreateDto>();
 
   form: FormGroup;
@@ -48,6 +47,13 @@ export class PackageModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const change = changes['resetToken'];
+    if(change && !change.firstChange){
+      this.initForm();
+    }
   }
 
 
@@ -174,7 +180,6 @@ export class PackageModalComponent implements OnInit {
 
     }
     this.confirm.emit(dto);
-    this.show = false;
   }
 
   protected readonly PrivilegeType = PrivilegeType;

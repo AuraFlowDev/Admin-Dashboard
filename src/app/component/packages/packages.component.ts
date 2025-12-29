@@ -22,7 +22,7 @@ import {ConfirmDialogComponent} from "../shared/confirm-dialog/confirm-dialog.co
   styleUrl: './packages.component.scss'
 })
 export class PackagesComponent implements OnInit {
-
+  resetToken = 0;
   packages: PackageDto[] = [];
   showCreateModal: boolean = false;
   showConfirmModal: boolean = false;
@@ -51,15 +51,16 @@ export class PackagesComponent implements OnInit {
   createPackage(dto: PackageCreateDto) {
     this.service.createPackage(dto).subscribe({
       next: (data) => {
-        this.toastr.success("Package created");
         data = {...data, active: true};
         this.packages.push(data);
+        this.resetToken++;
+        this.showCreateModal = false;
+        this.toastr.success("Package created");
       },
       error: (err) => {
         this.toastr.error(err.error.error);
       }
     })
-    this.showCreateModal = false;
   }
 
   closeCreateModal() {

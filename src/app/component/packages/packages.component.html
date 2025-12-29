@@ -54,7 +54,8 @@
 <app-packagemodal
   [show]="showCreateModal"
   (confirm)="createPackage($event)"
-  (cancel)="closeCreateModal()">
+  (cancel)="closeCreateModal()"
+  [resetToken]="resetToken">
 </app-packagemodal>
 
 <ng-template #detailsModal>
