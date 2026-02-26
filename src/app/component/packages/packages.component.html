@@ -41,6 +41,12 @@
     </div>
   </div>
   <ng-container *ngIf="showDetails" [ngTemplateOutlet]="detailsModal"></ng-container>
+  <app-packagemodal
+    [show]="showEditModal"
+    [package]="selected"
+    (confirm)="updatePackage($event)"
+    (cancel)="closeEditModal()">
+  </app-packagemodal>
 </div>
 
 <app-confirm-dialog
@@ -78,6 +84,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-secondary" (click)="closeDetailsModal()">Close</button>
+          <button class="btn btn-outline-primary" (click)="openEditModal(selected!)">Edit</button>
           <button class="btn btn-primary" (click)="openConfirmModal(selected!)">
             {{ selected?.active ? 'Deactivate' : 'Activate' }}
           </button>

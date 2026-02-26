@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {PackageCreateDto, PackageDto} from "../../dto/PackageDtos";
+import {PackageCreateDto, PackageDto, PackageUpdateDto} from "../../dto/PackageDtos";
 import {PackageService} from "../../services/packages.service";
 import {ToastrService} from "ngx-toastr";
 import {NgClass, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
@@ -25,6 +25,7 @@ export class PackagesComponent implements OnInit {
   resetToken = 0;
   packages: PackageDto[] = [];
   showCreateModal: boolean = false;
+  showEditModal: boolean = false;
   showConfirmModal: boolean = false;
   selected: PackageDto | null = null;
   showDetails: boolean = false;
@@ -68,8 +69,35 @@ export class PackagesComponent implements OnInit {
   }
 
   openCreateModal() {
+    this.selected = null;
     this.showCreateModal = true;
     console.log("open modal:", this.showCreateModal);
+  }
+
+  openEditModal(packageDto: PackageDto) {
+    this.showDetails = false;
+    this.selected = packageDto;
+    this.showEditModal = true;
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.selected = null;
+  }
+
+  updatePackage(dto: PackageUpdateDto) {
+    if (!this.selected) return;
+    const id = this.selected.id;
+    this.service.updatePackage(id, dto).subscribe({
+      next: (updatedPkg) => {
+        this.packages = this.packages.map(p => p.id === id ? updatedPkg : p);
+        this.closeEditModal();
+        this.toastr.success("Package updated");
+      },
+      error: (err) => {
+        this.toastr.error(err.error.error);
+      }
+    })
   }
 
   openConfirmModal(packageDto: PackageDto) {
