@@ -20,3 +20,9 @@ export class PackageCreateDto {
   price: number;
   privileges: PrivilegeDto[];
 }
+
+export class PackageUpdateDto{
+  name?:string;
+  description?:string;
+  price?:number;
+}

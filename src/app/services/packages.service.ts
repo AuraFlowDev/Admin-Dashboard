@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Globals} from "../globals/globals";
 import {Observable} from "rxjs";
-import {PackageCreateDto, PackageDto, PackageFetchDto} from "../dto/PackageDtos";
+import {PackageCreateDto, PackageDto, PackageFetchDto, PackageUpdateDto} from "../dto/PackageDtos";
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,11 @@ export class PackageService {
   }
 
   activatePackage(id: number): Observable<PackageDto> {
-    return this.http.put<PackageDto>(`${this.baseUrl}/${id}`, {});
+  return this.http.put<PackageDto>(`${this.baseUrl}/${id}`, {});
+  }
+
+  updatePackage(id:number, dto:PackageUpdateDto ):Observable<PackageDto>{
+  return this.http.patch<PackageDto>(`${this.baseUrl}/${id}`, dto );
   }
 
 }
