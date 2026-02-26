@@ -5,7 +5,7 @@
     <div class="modal-content">
       <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
         <div class="modal-header">
-          <h5 class="modal-title">Create Package</h5>
+          <h5 class="modal-title">{{ package ? 'Edit' : 'Create' }} Package</h5>
           <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
         </div>
 
@@ -55,7 +55,7 @@
           <hr>
 
           <!-- Add Privilege -->
-          <div class="dropdown mb-3">
+          <div class="dropdown mb-3" *ngIf="!package">
             <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
               + Add Privilege
             </button>
@@ -69,7 +69,7 @@
           </div>
 
           <!-- Privileges -->
-          <div *ngIf="privileges.controls.length === 0" class="text-muted">
+          <div *ngIf="!package && privileges.controls.length === 0" class="text-muted">
             No privileges added yet.
           </div>
 
@@ -117,7 +117,7 @@
         <!-- Footer -->
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
-          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Create</button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || (package && !isChanged)">{{ package ? 'Save' : 'Create' }}</button>
         </div>
       </form>
     </div>

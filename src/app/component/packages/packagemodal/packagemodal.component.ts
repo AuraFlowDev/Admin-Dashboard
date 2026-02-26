@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {PackageCreateDto} from "../../../dto/PackageDtos";
+import {PackageCreateDto, PackageDto, PackageUpdateDto} from "../../../dto/PackageDtos";
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {
   AffiliatePrivilegeDto,
@@ -32,6 +32,7 @@ type FormPrivilege =
 export class PackageModalComponent implements OnInit, OnChanges {
   @Input() show: boolean = false;
   @Input() resetToken = 0;
+  @Input() package: PackageDto | null = null;
   @Output() cancel = new EventEmitter<void>();
   @Output() confirm = new EventEmitter<PackageCreateDto>();
 
@@ -51,17 +52,22 @@ export class PackageModalComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     const change = changes['resetToken'];
-    if(change && !change.firstChange){
+    if (change && !change.firstChange) {
       this.initForm();
+    }
+
+    const pkgChange = changes['package'];
+    if (pkgChange && pkgChange.currentValue) {
+      this.initForm(pkgChange.currentValue);
     }
   }
 
 
-  initForm() {
+  initForm(pkg: PackageDto | null = null) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      description: [''],
-      price: [0, [Validators.required, Validators.min(0), Validators.pattern("^\\d+(\\.\\d{1,2})?$")]],
+      name: [pkg?.name || '', Validators.required],
+      description: [pkg?.description || ''],
+      price: [pkg?.price || 0, [Validators.required, Validators.min(0), Validators.pattern("^\\d+(\\.\\d{1,2})?$")]],
       privileges: this.fb.array([])
     });
   }
@@ -147,14 +153,41 @@ export class PackageModalComponent implements OnInit, OnChanges {
   }
 
 
+  get isChanged(): boolean {
+    if (!this.package || !this.form) return true;
+    const raw = this.form.getRawValue();
+    const description = (raw.description as string).trim();
+    return (
+      raw.name !== this.package.name ||
+      description !== (this.package.description || "") ||
+      Number(raw.price) !== Number(this.package.price)
+    );
+  }
+
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
+    if (this.package && !this.isChanged) {
+      this.onCancel();
+      return;
+    }
+
     const raw = this.form.getRawValue();
     const description = (raw.description as string).trim();
+
+    if (this.package) {
+      const dto: PackageUpdateDto = {
+        name: raw.name,
+        description: description === "" ? undefined : description,
+        price: raw.price
+      };
+      this.confirm.emit(dto as any);
+      return;
+    }
+
     const dto: PackageCreateDto = {
       name: raw.name,
       description: description === "" ? undefined : description,
