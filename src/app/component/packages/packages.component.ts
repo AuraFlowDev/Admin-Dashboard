@@ -88,9 +88,10 @@ export class PackagesComponent implements OnInit {
   updatePackage(dto: PackageUpdateDto) {
     if (!this.selected) return;
     const id = this.selected.id;
+    const wasActive = this.selected.active;
     this.service.updatePackage(id, dto).subscribe({
       next: (updatedPkg) => {
-        this.packages = this.packages.map(p => p.id === id ? updatedPkg : p);
+        this.packages = this.packages.map(p => p.id === id ? {...updatedPkg, active: wasActive} : p);
         this.closeEditModal();
         this.toastr.success("Package updated");
       },
